@@ -390,8 +390,7 @@ function ContactBody({ onClose, onSent }) {
 
         {state === "error" && (
           <div className="ga-form-error" role="alert">
-            Something didn&rsquo;t go through. Email us directly at{" "}
-            <a href="mailto:matthias@generaladmission.la">matthias@generaladmission.la</a>.
+            Something didn&rsquo;t go through. Please try again or reach out to us directly.
           </div>
         )}
 
