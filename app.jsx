@@ -483,6 +483,8 @@ function App() {
   }, [mode]);
 
   useEffect(() => {
+    // App has mounted — React + Babel transpilation complete. Advance loader to 65%.
+    window.GALoader?.advance(65);
     const t = setTimeout(() => setRevealed(true), 250);
     return () => clearTimeout(t);
   }, []);

@@ -1,4 +1,6 @@
 /* General Admission */
+
+
 :root {
   --bg: #FFFFFF;
   --bg-dots: #E4E4E4;
@@ -58,7 +60,7 @@ body {
 .ga-overlay.is-revealed .ga-corner-br { opacity: 1; transform: none; transition-delay: 950ms; }
 
 /* Harmonized margins — top and bottom corners share the same inset */
-.ga-corner-tl { top: 24px;    left: 64px;  max-width: 460px; }
+.ga-corner-tl { top: 24px;    left: 64px;  max-width: 580px; }
 .ga-corner-tr {
   top: 16px; right: 64px;
   display: flex; align-items: center; gap: 12px;
@@ -83,19 +85,28 @@ body {
 .ga-corner-bl { bottom: 48px; left: 64px;  max-width: 480px; }
 .ga-corner-br { bottom: 48px; right: 64px; }
 
-.ga-intro { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+.ga-intro { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
 .ga-intro strong { font-weight: 700; letter-spacing: 0.04em; }
 .ga-footer-copy { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
 
 /* Project stats — quiet caption pair, matches body type */
+.ga-stats-label {
+  margin: 0 0 8px 0;
+  font-size: 14.5px; font-weight: 400;
+  color: var(--ink);
+  display: block;
+  width: fit-content;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 4px;
+}
 .ga-stats {
   list-style: none; margin: 0; padding: 0;
-  display: flex; flex-direction: row; gap: 28px; align-items: baseline; justify-content: flex-end;
+  display: flex; flex-direction: column; gap: 4px; align-items: stretch;
   font-size: 14.5px; line-height: 1.55;
   color: var(--ink);
 }
 .ga-stats li {
-  display: inline-flex; align-items: baseline; gap: 14px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
   white-space: nowrap;
 }
 .ga-stats span { color: var(--ink); font-weight: 400; }
@@ -347,6 +358,260 @@ textarea.ga-uf-input { min-height: 40px; line-height: 1.5; resize: none; }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* ===========================================================================
+   Chat AI overlay
+   =========================================================================== */
+/* Full-screen chat container — just centers the group */
+.ga-chat {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  padding: 220px 120px 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms cubic-bezier(.2,.7,.2,1);
+  color: var(--ink);
+  font-family: inherit;
+  background: var(--bg);
+}
+.ga-chat.is-active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* Mini wordmark — top center of chat overlay */
+.gac-logo {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 96px;
+  cursor: default;
+  pointer-events: auto;
+}
+
+/* Theme toggle inside chat overlay — desktop: just left of the close button */
+.gac-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 112px;
+}
+
+/* Back / close button — top right of the chat overlay */
+.gac-back {
+  position: absolute;
+  top: 20px;
+  right: 64px;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--ink);
+  opacity: 0.4;
+  transition: opacity 200ms;
+  line-height: 0;
+}
+.gac-back:hover { opacity: 1; }
+
+/* The centered content block — header, thread, input, footer stack together */
+.gac-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 220px);
+  overflow: hidden;
+}
+
+.gac-header {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+.gac-subheader {
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.45;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.gac-thread {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 20px;
+  max-height: 35vh;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+.gac-thread:empty { display: none; }
+.gac-thread::-webkit-scrollbar { display: none; }
+
+.gac-msg {
+  font-size: 16px;
+  line-height: 1.5;
+  animation: gac-in 280ms cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes gac-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.gac-msg-user   { align-self: flex-end; opacity: 0.45; max-width: 480px; }
+.gac-msg-claude { align-self: flex-start; max-width: 560px; }
+.gac-msg-thinking {
+  align-self: flex-start;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  height: 24px;
+}
+.gac-msg-thinking span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.4;
+  animation: gac-pulse 1.1s ease-in-out infinite;
+}
+.gac-msg-thinking span:nth-child(2) { animation-delay: 0.18s; }
+.gac-msg-thinking span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes gac-pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.3; }
+  50%       { transform: scale(1.5); opacity: 1;   }
+}
+
+.gac-compose { flex-shrink: 0; }
+
+.gac-input {
+  outline: none;
+  font-family: inherit;
+  font-size: 160px;
+  line-height: 1.08;
+  color: var(--ink);
+  caret-color: var(--ink);
+  word-break: break-word;
+  white-space: pre-wrap;
+  min-height: 1.15em;
+  width: 100%;
+}
+/* Hide native caret when empty — custom blinking cursor takes over */
+.gac-input.is-empty { caret-color: transparent; }
+.gac-input.is-empty::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 0.82em;
+  background: var(--ink);
+  vertical-align: text-bottom;
+  margin-bottom: 0.04em;
+  animation: gac-blink 1s step-end infinite;
+}
+@keyframes gac-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Footer sits directly below the input */
+.gac-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  flex-shrink: 0;
+}
+.gac-hint {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.35;
+  transition: opacity 350ms;
+}
+.gac-submit {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--ink);
+  opacity: 0.4;
+  transition: opacity 200ms;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+.gac-submit:hover { opacity: 1; }
+.gac-submit-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Processing state */
+.gac-processing {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: gac-in 300ms cubic-bezier(.2,.7,.2,1) both;
+}
+.gac-processing-text {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.gac-proc-dots {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  padding-bottom: 4px;
+}
+.gac-proc-dots i {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: gac-pulse 1.1s ease-in-out infinite;
+  opacity: 0.5;
+}
+.gac-proc-dots i:nth-child(2) { animation-delay: 0.18s; }
+.gac-proc-dots i:nth-child(3) { animation-delay: 0.36s; }
+
+/* Thanks + dot smiley */
+.gac-thanks {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 120px;
+  gap: 28px;
+  text-align: center;
+  animation: gac-in 500ms cubic-bezier(.2,.7,.2,1) both;
+}
+.gac-thanks-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.gac-smiley {
+  width: 120px;
+  height: 120px;
+  color: var(--ink);
+  animation: gac-in 700ms 200ms cubic-bezier(.2,.7,.2,1) both;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 720px) {
   /* Top row: GA blurb left (62%) + theme toggle / email icon right.
@@ -380,6 +645,16 @@ textarea.ga-uf-input { min-height: 40px; line-height: 1.5; resize: none; }
 
   .ga-panel-contact { padding: 44px 28px 32px; }
   .ga-contact-body { padding: 88px 28px 28px; }
+
+  .ga-chat { padding: 200px 28px 0; }
+  .gac-group { max-height: calc(100vh - 200px); }
+  .gac-theme-toggle { right: auto; left: 20px; }
+  .gac-back { right: 20px; }
+  .gac-input { font-size: 72px; }
+  .gac-msg-user   { max-width: 72%; }
+  .gac-msg-claude { max-width: 82%; }
+  .gac-thanks-text { font-size: 18px; }
+  .gac-msg { font-size: 15px; }
 }
 
 /* Very narrow — extra fitting tweaks */

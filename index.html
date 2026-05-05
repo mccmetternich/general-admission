@@ -5,31 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>General Admission</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet" />
+<!-- Fonts: self-hosted, no CDN round-trip -->
+<link rel="stylesheet" href="fonts/fonts.css" />
 <link rel="stylesheet" href="styles.css" />
+<script>
+// Set data-mode before paint — matches app.js time-based logic
+(function(){
+  try{
+    var s=localStorage.getItem('ga-mode');
+    var h=new Date().getHours();
+    var m=(s==='light'||s==='dark')?s:(h>=7&&h<19?'light':'dark');
+    document.documentElement.setAttribute('data-mode',m);
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
-<div id="root">
-<style>
-  .ga-loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff}
-  @media(prefers-color-scheme:dark){.ga-loader{background:#0A0A0A}}
-  .ga-loader-dot{width:6px;height:6px;border-radius:50%;background:#0A0A0A;margin:0 4px;animation:ga-load .9s ease-in-out infinite}
-  @media(prefers-color-scheme:dark){.ga-loader-dot{background:#F5F5F5}}
-  .ga-loader-dot:nth-child(2){animation-delay:.15s}
-  .ga-loader-dot:nth-child(3){animation-delay:.3s}
-  @keyframes ga-load{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}}
-</style>
-<div class="ga-loader"><div class="ga-loader-dot"></div><div class="ga-loader-dot"></div><div class="ga-loader-dot"></div></div>
+
+
+<!-- ─── Overlay ─────────────────────────────────────────────────────────────── -->
+<div id="ga-overlay" class="ga-overlay">
+
+  <!-- Top-left: intro copy -->
+  <div class="ga-corner ga-corner-tl">
+    <p class="ga-intro">
+      <strong>GENERAL ADMISSION</strong> is a privately held holding company that builds, operates, and scales category&#8209;defining brands in partnership with the world&rsquo;s leading influencers, manufacturers, and retailers.
+    </p>
+  </div>
+
+  <!-- Top-right: theme toggle + contact pill -->
+  <div class="ga-corner ga-corner-tr">
+    <button type="button" class="ga-theme-toggle" id="ga-theme-btn"></button>
+    <button class="ga-pill" id="ga-contact-btn" aria-label="Build with us">
+      <span class="ga-pill-text">BUILD WITH US</span>
+      <span class="ga-pill-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="1.5"/>
+          <path d="M3.5 6.5l8.5 6 8.5-6"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <!-- Bottom-left: footer copy -->
+  <div class="ga-corner ga-corner-bl">
+    <p class="ga-footer-copy">
+      Built by repeat operators who know that lasting brands take time. Deep experience across product invention, supply chain, world&#8209;building, consumer marketing, influencer partnerships, and omni&#8209;channel retail.
+    </p>
+  </div>
+
+
 </div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- ─── Contact modal ─────────────────────────────────────────────────────── -->
+<div id="ga-contact-stage" class="ga-contact-stage" style="display:none">
+  <div class="ga-contact-frame" id="ga-contact-frame">
+    <div class="ga-contact-body" id="ga-contact-body"></div>
+  </div>
+</div>
 
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="dotfield.jsx"></script>
-<script type="text/babel" src="app.jsx"></script>
+<script src="dotfield.js" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>

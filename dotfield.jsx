@@ -347,6 +347,7 @@ function DotField({ palette }) {
     let raf = 0;
     let t0 = performance.now();
     let litCellPositions = [];
+    let loaderDone = false;
 
     function frame(now) {
       const t = (now - t0) / 1000;
@@ -531,6 +532,12 @@ function DotField({ palette }) {
         }
         ctx.fill();
         ctx.restore();
+      }
+
+      // Signal loader complete on first drawn frame
+      if (!loaderDone) {
+        loaderDone = true;
+        window.GALoader?.advance(100);
       }
 
       raf = requestAnimationFrame(frame);
