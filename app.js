@@ -620,7 +620,8 @@ async function submitChat() {
 
     const isDone    = raw.indexOf('[DONE]') !== -1;
     const isAbusive = raw.indexOf('[ABUSIVE]') !== -1;
-    const reply     = raw.replace('[DONE]', '').replace('[ABUSIVE]', '').trim();
+    const isExit    = raw.indexOf('[EXIT]') !== -1;
+    const reply     = raw.replace('[DONE]', '').replace('[ABUSIVE]', '').replace('[EXIT]', '').trim();
 
     if (reply) {
       chatMessages.push({ role: 'assistant', content: reply });
@@ -631,13 +632,15 @@ async function submitChat() {
       chatPhase = 'closing';
       setTimeout(function () {
         showChatThanks();
-        // Hide the Build With Us button for the rest of the session
         var btn = document.getElementById('ga-contact-btn');
         if (btn) btn.style.display = 'none';
       }, 600);
     } else if (isDone) {
       chatPhase = 'closing';
       setTimeout(showChatThanks, 900);
+    } else if (isExit) {
+      chatPhase = 'closing';
+      setTimeout(showChatExit, 900);
     } else {
       chatPhase = 'typing';
       setTimeout(function () { document.getElementById('gac-input') && document.getElementById('gac-input').focus(); }, 80);
@@ -725,6 +728,25 @@ function showChatThanks() {
     `;
     setTimeout(closeChat, 2500);
   }, 4000);
+}
+
+function showChatExit() {
+  const body = document.getElementById('gac-body');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="gac-thanks">
+      <svg class="gac-smiley" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="35" cy="38" r="5" fill="currentColor"/>
+        <circle cx="65" cy="38" r="5" fill="currentColor"/>
+        <circle cx="26" cy="63" r="3.5" fill="currentColor"/>
+        <circle cx="36" cy="72" r="3.5" fill="currentColor"/>
+        <circle cx="50" cy="76" r="3.5" fill="currentColor"/>
+        <circle cx="64" cy="72" r="3.5" fill="currentColor"/>
+        <circle cx="74" cy="63" r="3.5" fill="currentColor"/>
+      </svg>
+    </div>
+  `;
+  setTimeout(closeChat, 2000);
 }
 
 // ─── Run ──────────────────────────────────────────────────────────────────────
